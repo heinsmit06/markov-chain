@@ -1,0 +1,4 @@
+Bad programmers worry 
+about code. Good programmers 
+worry about data-structures 
+and their relationships.
