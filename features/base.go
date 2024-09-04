@@ -3,6 +3,7 @@ package features
 import (
 	"fmt"
 	"io"
+	"math/rand"
 	"os"
 	"strings"
 )
@@ -22,9 +23,46 @@ func Base(input []string) {
 		fmt.Print(i + " ")
 		fmt.Println(v)
 	}*/
+
+	printText(combinations, input)
+}
+
+func printText(combinations map[string][]string, inputText []string) {
+	prefixLength := 2
+	defaultNumber := 100
+
+	firstPartPrefix := inputText[0]
+	secondPartPrefix := inputText[1]
+	fmt.Print(firstPartPrefix + " " + secondPartPrefix + " ")
+	prefix := firstPartPrefix + " " + secondPartPrefix
+
+	for i := 0; i < defaultNumber-prefixLength; i++ {
+		slcLen := len(combinations[prefix])
+		if slcLen == 0 {
+			fmt.Println()
+			os.Exit(0)
+		}
+		// fmt.Println("\nlen:", slcLen)
+
+		idxRnd := rand.Intn(slcLen)
+		// fmt.Println("id random:", idxRnd)
+		suffix := combinations[prefix][idxRnd]
+		fmt.Print(suffix + " ")
+
+		firstPartPrefix = secondPartPrefix
+		secondPartPrefix = suffix
+		prefix = firstPartPrefix + " " + secondPartPrefix
+	}
+	fmt.Println()
 }
 
 func InputHandler() []string {
+	stat, _ := os.Stdin.Stat()
+	if (stat.Mode() & os.ModeCharDevice) != 0 {
+		fmt.Fprintln(os.Stderr, "Error: no input into Stdin")
+		os.Exit(1)
+	}
+
 	bytes, err := io.ReadAll(os.Stdin)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error reading from stdin:", err)
