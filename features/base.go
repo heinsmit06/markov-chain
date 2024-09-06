@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func Base(input []string, wordCount int) {
+func Base(input []string, wordCount int, prefix string) {
 	combinations := make(map[string][]string)
 	for i := 1; i < len(input); i++ {
 		if i < len(input)-1 {
@@ -26,10 +26,11 @@ func Base(input []string, wordCount int) {
 	}*/
 
 	checkWordCount(wordCount)
-	printText(combinations, input, wordCount)
+	checkPrefixPresence(combinations, prefix)
+	printText(combinations, input, wordCount, prefix)
 }
 
-func printText(combinations map[string][]string, inputText []string, wordCount int) {
+func printText(combinations map[string][]string, inputText []string, wordCount int, startingPrefix string) {
 	prefixLength := 2
 	firstPartPrefix := inputText[0]
 	secondPartPrefix := inputText[1]
@@ -51,10 +52,8 @@ func printText(combinations map[string][]string, inputText []string, wordCount i
 			fmt.Println()
 			os.Exit(0)
 		}
-		// fmt.Println("\nlen:", slcLen)
 
 		idxRnd := rand.Intn(slcLen)
-		// fmt.Println("id random:", idxRnd)
 		suffix := combinations[prefix][idxRnd]
 		fmt.Print(suffix + " ")
 
@@ -65,7 +64,7 @@ func printText(combinations map[string][]string, inputText []string, wordCount i
 	fmt.Println()
 }
 
-func InputHandler() ([]string, int) {
+func InputHandler() ([]string, int, string) {
 	stat, _ := os.Stdin.Stat()
 	if (stat.Mode() & os.ModeCharDevice) != 0 {
 		fmt.Fprintln(os.Stderr, "Error: no input into Stdin")
@@ -73,6 +72,7 @@ func InputHandler() ([]string, int) {
 	}
 
 	wordCountPtr := flag.Int("w", 100, "an int flag that allows to set the maximum number of words to display")
+	prefixPtr := flag.String("p", "", "a string flag that allows to set the starting prefix from the given text")
 	flag.Parse()
 
 	bytes, err := io.ReadAll(os.Stdin)
@@ -84,5 +84,5 @@ func InputHandler() ([]string, int) {
 	input := string(bytes)
 	inputText := strings.Fields(input)
 
-	return inputText, *wordCountPtr
+	return inputText, *wordCountPtr, *prefixPtr
 }

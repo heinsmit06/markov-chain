@@ -11,3 +11,14 @@ func checkWordCount(wordCount int) {
 		os.Exit(0)
 	}
 }
+
+func checkPrefixPresence(combinations map[string][]string, prefix string) {
+	if len(prefix) == 2 {
+		_, prs := combinations[prefix]
+		if !prs {
+			fmt.Fprintln(os.Stderr, "Error: there is no such prefix in the text")
+			os.Exit(1)
+		}
+	} else {
+	}
+}
