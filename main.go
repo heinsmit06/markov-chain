@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-	inputText := features.InputHandler()
-	features.Base(inputText)
+	inputText, wordCount := features.InputHandler()
+	features.Base(inputText, wordCount)
 }

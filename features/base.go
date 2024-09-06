@@ -1,6 +1,7 @@
 package features
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"math/rand"
@@ -8,7 +9,7 @@ import (
 	"strings"
 )
 
-func Base(input []string) {
+func Base(input []string, wordCount int) {
 	combinations := make(map[string][]string)
 	for i := 1; i < len(input); i++ {
 		if i < len(input)-1 {
@@ -24,19 +25,27 @@ func Base(input []string) {
 		fmt.Println(v)
 	}*/
 
-	printText(combinations, input)
+	checkWordCount(wordCount)
+	printText(combinations, input, wordCount)
 }
 
-func printText(combinations map[string][]string, inputText []string) {
+func printText(combinations map[string][]string, inputText []string, wordCount int) {
 	prefixLength := 2
-	defaultNumber := 100
-
 	firstPartPrefix := inputText[0]
 	secondPartPrefix := inputText[1]
+
+	if wordCount == 0 {
+		fmt.Fprintln(os.Stdout, "")
+		os.Exit(0)
+	} else if wordCount == 1 {
+		fmt.Fprintln(os.Stdout, firstPartPrefix)
+		os.Exit(0)
+	}
+
 	fmt.Print(firstPartPrefix + " " + secondPartPrefix + " ")
 	prefix := firstPartPrefix + " " + secondPartPrefix
 
-	for i := 0; i < defaultNumber-prefixLength; i++ {
+	for i := 0; i < wordCount-prefixLength; i++ {
 		slcLen := len(combinations[prefix])
 		if slcLen == 0 {
 			fmt.Println()
@@ -56,12 +65,15 @@ func printText(combinations map[string][]string, inputText []string) {
 	fmt.Println()
 }
 
-func InputHandler() []string {
+func InputHandler() ([]string, int) {
 	stat, _ := os.Stdin.Stat()
 	if (stat.Mode() & os.ModeCharDevice) != 0 {
 		fmt.Fprintln(os.Stderr, "Error: no input into Stdin")
 		os.Exit(1)
 	}
+
+	wordCountPtr := flag.Int("w", 100, "an int flag that allows to set the maximum number of words to display")
+	flag.Parse()
 
 	bytes, err := io.ReadAll(os.Stdin)
 	if err != nil {
@@ -72,14 +84,5 @@ func InputHandler() []string {
 	input := string(bytes)
 	inputText := strings.Fields(input)
 
-	return inputText
+	return inputText, *wordCountPtr
 }
-
-/*
-_, present := combinations[input[i-1]+input[i]]
-			if present {
-				combinations[input[i-1]+" "+input[i]] = append(combinations[input[i-1]+" "+input[i]], input[i+1])
-			} else {
-				combinations[input[i-1]+" "+input[i]] = append(combinations[input[i-1]+" "+input[i]], input[i+1])
-			}
-*/
